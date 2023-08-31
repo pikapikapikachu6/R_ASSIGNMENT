@@ -140,7 +140,7 @@ Use t-test to check whether or not the β1 differ significantly from zero.
 - **β1 ≠ 0 (β1 differ significantly from zero)** 
 
 ## Explanations
-From the R code result in (b), the t-statisic value is = 22.179 and the p-value is less than 0.05. Then, we reject H0 in favor of H1. And conclude that it has strong evidence that the slope for the regression function is significant differ from 0. 
+From the R code result in (b), the t-statisic value is 35.09 and the p-value is less than 0.05. Then, we reject H0 in favor of H1. And conclude that it has strong evidence that the slope for the regression function is significant differ from 0. 
 
 ## Summary
 From the two t-tests, we conclude that **it has strong evidence that the intercept and the slope for the regression function are both significant differ from 0.** 
@@ -187,7 +187,7 @@ The 99% interval estimate for this value of the bond index is:
 
 - **Upper Bound: 1071.534  **   
 
-This interval estimate provides a range in which we are 99% confident that the true value of H0A0 will fall, given the specified value of JNK.
+This interval (1040.435, 1071.534) estimate provides a range in which we are 99% confident that the true value of H0A0 will fall, given the specified value of JNK.
 
 
 
