@@ -1,0 +1,193 @@
+---
+title: "STAT6038 Regression Modelling Assignment"
+author: "Shutong Li (u6825537)"
+date: "20/08/2023"
+output:
+  html_document:
+    fig_caption: yes
+    number_sections: yes
+    self_contained: yes
+    theme: cerulean
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+# Leave this code chunk unaltered.
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Load data from 'etf.csv' file**
+```{r}
+# used to load data from 'etf.csv' file and attach data
+etf <- read.csv("etf.csv")
+attach(etf)
+```
+
+# Question a
+## Draw the scatter plot 
+```{r}
+plot(H0A0, JNK, main = "Relationship between JNK and H0A0", pch = 19)
+abline(coef(lm(JNK ~ H0A0)), col = "red", ltd = "2")
+```
+
+From the scatter plot, it seems that there is a strong linear association between the H0A0 and JNK two variables. Now then I choose to use the 'cor.test()' function to conduct a hypothesis test of whether the correlation is significantly different from zero.
+
+## Hypotheses
+Suppose:
+
+- ρ represent the correlation between H0A0 and JNK
+
+**null hypothesis(H0):**    
+
+- **H0: ρ = 0 (there is no correlation between flower H0A0 and JNK)**  
+
+**alternative hypothesis(H1):**    
+
+- **H1: ρ ≠ 0 (there is a correlation between H0A0 and JNK)** 
+
+## Calculating and Explanations using R
+```{r}
+cor.test(H0A0, JNK)
+```
+
+## Summary
+From the data got from R code, the t95 = 35.092 and p-value < 0.05, reject H0 in favor of H1. Thus, **conclude that ρ is significantly different from 0 which means there is a statistically significant correlation between the H0A0 and JNK variables.**   
+And can observed from the R results that the sample correlation r = 0.91, which **proved that there is a strong positive correlation between H0A0 and JNK.**
+
+# Question b
+
+## draw plots using R
+```{r}
+etf.lm <- lm(H0A0 ~ JNK)
+etf.leverage <- hatvalues(etf.lm)
+summary(etf.lm)
+
+par(mfrow=c(2,2))
+
+# residuals against the fitted values
+plot(etf.lm, which = 1, pch = 19) 
+
+# a normal Q-Q plot of the residuals
+plot(etf.lm, which = 2, pch = 19)
+
+# a bar plot of the leverages for each observation and 
+barplot(etf.leverage, main = "Leverage plot", ylab = "Leverages", xlab = "index")
+abline(h=4/length(JNK), col=2, lty=2)
+which(etf.leverage > 4/length(JNK))
+
+# a bar plot of Cook’s distances for each observation
+plot(etf.lm, which = 4)
+```
+
+## Summary
+**Residuals against the fitted values:  **  
+From the residuals against the fitted values plot, residuals seem to randomly spread around zero. Linearity assumption is mostly satisfied that there is no systematic pattern in the residuals. The variation stays most constant and most residuals are within (-10, 10) except for a few points, indicating a constant variance of the error term. Note the 33th, 35th & 36th observations have a relatively larger residual than others. From the red line, it indicates that the linearity is not so good.
+
+**A normal Q-Q plot of the residuals: **  
+From the normal Q-Q plot of the residuals, it shows an obvious deviation from the straight line especially in the tails. This deviation suggests that the plot is more met the light tail pattern, which indicates that the residuals may not be exactly normally distributed. This may be a violation of the assumption of normality for the error terms.
+
+**A bar plot of the leverages for each observation and:  **
+From the bar plot of leverages for each observation, most observations have low leverage which means they don't have undue influence on the fitted regression line. However, eighteen observations (index: 1, 71, 72, 73, 74, 75, 76, 77, 78, 243, 244, 245, 246, 247, 248, 249, 250, 251) have relatively high leverages. Whether they have large impacts on the fitted regression, need to look at Cook's distance.
+
+**A bar plot of Cook’s distances for each observation:  **
+From the bar plot of Cook's distances for each observation, most observations have low Cook's distances which means they have little influence on the fitted regression line. The 247th observation has a relatively the most large cook's distance so could be an influential point or an outlier point Meanwhile, the 247th observation has a high leverage from early plots.
+
+# Question c
+## Nonnormality
+For light-tailed distributions, the consequences of non-normality are not serious and can reasonably be ignored. If I need to resolve this problem I can also use the transformation method.
+
+### Transformation
+Transformations on the response variable Y are useful to remedy nonnormality problems. It may also at the same time help to linearize a curvilinear regression relation
+
+## Abnormal points
+For the abnormal points like outliers or high-leverage points, we need to clear them first and then fit the model again. If there are still problems, it may need to use transformation to solve it. 
+
+# Question d
+## the estimated coefficients of the SLR model in part (b) and the standard errors associated with these coefficients
+||  Estimation   | Standard Error  |  
+| :----: |  :----:  | :----:  |  
+| Intercept | 223.162  | 24.074 |  
+| JNK| 22.179  | 0.632 |  
+
+## T-test for β0
+### Hypotheses
+Use t-test to check whether or not the β0 differ significantly from zero. 
+
+**null hypothesis:**  
+
+- **β0 = 0 (β0 not differ significantly from zero)**  
+
+**alternative hypothesis:**    
+
+- **β0 ≠ 0 (β0 differ significantly from zero)** 
+
+## Explanations
+From the R code result in (b), the t-statisic value is 9.27 and the p-value is less than 0.05. Then, we reject H0 in favor of H1. And conclude that it has strong evidence that the intercept for the regression function is significant differ from 0. 
+
+## T-test for β1
+### Hypotheses
+Use t-test to check whether or not the β1 differ significantly from zero. 
+
+**null hypothesis:**  
+
+- **β1 = 0 (β1 not differ significantly from zero)**  
+
+**alternative hypothesis:**    
+
+- **β1 ≠ 0 (β1 differ significantly from zero)** 
+
+## Explanations
+From the R code result in (b), the t-statisic value is = 22.179 and the p-value is less than 0.05. Then, we reject H0 in favor of H1. And conclude that it has strong evidence that the slope for the regression function is significant differ from 0. 
+
+## Summary
+From the two t-tests, we conclude that **it has strong evidence that the intercept and the slope for the regression function are both significant differ from 0.** 
+
+# Question e
+## Coefficient of determination
+From the (b) R code result, the coefficient of determination R-squared is 0.8318. This suggest that the model explains about 83.18% of the variability which means the variation in H0A0 is explained by JNK.  
+
+## F-test 
+### ANOVA
+```{r}
+anova(etf.lm)
+```
+
+### Hypotheses
+
+**null hypothesis:**  
+
+- **β1 = 0 (The slope of the regression line is equal to zero, meaning that there is no relationship between the predictor and the response variable.)**  
+
+**alternative hypothesis:**    
+
+- **β1 ≠ 0 (The slope of the regression line is not equal to zero, meaning that there is a relationship between the predictor and the response variable.)**  
+
+### Explanations
+The f-statistic is 1231.4 and the p-value < 0.05. Thus, we reject H0 in favor of H1. And conclude that it has strong evidence that the slope of the regression line is not equal to zero, meaning that there is a relationship between the predictor and the response variable. This indicated that there is a statistically significant linear relationship between JNK and H0A0, and the predictor JNK is useful in explaining the variation in the response variable H0A0.
+
+## Summary
+The coefficient of determination R-squared is **0.8318**. And there is **a statistically significant linear relationship between JNK and H0A0, and the predictor JNK is useful in explaining the variation in the response variable H0A0.**
+
+# Question f
+## Prediction using R
+```{r}
+predict(etf.lm, newdata = data.frame(JNK = 37.55), interval = "confidence", level = 0.99)
+predict(etf.lm, newdata = data.frame(JNK = 37.55), interval = "prediction", level = 0.99)
+```
+
+
+## Explanation  and Summary
+From the R code result, given a JNK value of 37.55, the expected value for H0A0 on that day is approximately **1055.984**.  
+The 99% interval estimate for this value of the bond index is: 
+
+- **Lower Bound: 1040.435  **  
+
+- **Upper Bound: 1071.534  **   
+
+This interval estimate provides a range in which we are 99% confident that the true value of H0A0 will fall, given the specified value of JNK.
+
+
+
